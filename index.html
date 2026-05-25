@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Citizen Grievance System</title>
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #dbeafe, #f0f9ff);
+    }
+
+    /* HEADER */
+    .header {
+        background: #1e3a8a;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+        display: flex;
+        justify-content: center;
+        padding: 30px;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    /* CARD STYLE */
+    .card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        width: 350px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    textarea {
+        width: 100%;
+        height: 120px;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        resize: none;
+    }
+
+    button {
+        margin-top: 10px;
+        width: 100%;
+        padding: 12px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background: #1d4ed8;
+    }
+
+    /* RESULT CARDS */
+    .result-card {
+        padding: 15px;
+        border-radius: 12px;
+        margin-top: 10px;
+        color: white;
+    }
+
+    .dept { background: #10b981; }
+    .sent { background: #f59e0b; }
+    .prio { background: #ef4444; }
+
+    .icon {
+        margin-right: 8px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    🏛️ Citizen Grievance Redressal System
+</div>
+
+<div class="container">
+
+    <!-- INPUT CARD -->
+    <div class="card">
+        <h3><i class="fa-solid fa-file-pen icon"></i>Submit Complaint</h3>
+
+        <textarea id="complaint" placeholder="Enter your complaint..."></textarea>
+
+        <button onclick="submitComplaint()">
+            <i class="fa-solid fa-paper-plane icon"></i> Submit
+        </button>
+    </div>
+
+    <!-- OUTPUT CARD -->
+    <div class="card">
+        <h3><i class="fa-solid fa-chart-line icon"></i>Prediction Result</h3>
+
+        <div id="department" class="result-card dept">
+            Department: -
+        </div>
+
+        <div id="sentiment" class="result-card sent">
+            Sentiment: -
+        </div>
+
+        <div id="priority" class="result-card prio">
+            Priority Score: -
+        </div>
+    </div>
+
+</div>
+
+<script>
+async function submitComplaint() {
+    const complaint = document.getElementById("complaint").value;
+
+    const response = await fetch("http://127.0.0.1:8000/predict", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text: complaint })
+    });
+
+    const data = await response.json();
+
+    document.getElementById("department").innerHTML =
+        "<b>Department:</b> " + data.department;
+
+    document.getElementById("sentiment").innerHTML =
+        "<b>Sentiment:</b> " + data.sentiment;
+
+    document.getElementById("priority").innerHTML =
+        "<b>Priority Score:</b> " + data.priority_score;
+}
+</script>
+
+</body>
+</html>
